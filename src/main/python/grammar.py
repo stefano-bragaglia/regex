@@ -41,7 +41,7 @@ def match_item():
 
 
 def match_any_character():
-    return RegExMatch(r'\.')
+    return '.'
 
 
 def match_character_class():
@@ -54,12 +54,11 @@ def match_character():
 
 # Character Classes
 def character_group():
-    return RegExMatch(r'\['), Optional(character_group_negative_modifier), OneOrMore(character_group_item), \
-           RegExMatch(r'\]')
+    return '[', Optional(character_group_negative_modifier), OneOrMore(character_group_item), ']'
 
 
 def character_group_negative_modifier():
-    return RegExMatch(r'^')
+    return '^'
 
 
 def character_group_item():
@@ -73,23 +72,23 @@ def character_class():
 
 
 def character_class_any_word():
-    return RegExMatch(r'\\w')
+    return '\\w'
 
 
 def character_class_any_word_inverted():
-    return RegExMatch(r'\\W')
+    return '\\W'
 
 
 def character_class_any_decimal_digit():
-    return RegExMatch(r'\\d')
+    return '\\d'
 
 
 def character_class_any_decimal_digit_inverted():
-    return RegExMatch(r'\\D')
+    return '\\D'
 
 
 def character_class_from_unicode_category():
-    return RegExMatch(r'\\p\{'), unicode_category_name, RegExMatch(r'\}')
+    return '\\p{', unicode_category_name, '}'
 
 
 def unicode_category_name():
@@ -97,7 +96,7 @@ def unicode_category_name():
 
 
 def character_range():
-    return char, Optional(RegExMatch(r'\-'), char)
+    return char, Optional('-', char)
 
 
 # Quantifiers
@@ -110,24 +109,23 @@ def quantifier_type():
 
 
 def lazy_modifier():
-    return RegExMatch(r'\?')
+    return '?'
 
 
 def zero_or_more_quantifier():
-    return RegExMatch(r'\*')
+    return '*'
 
 
 def one_or_more_quantifier():
-    return RegExMatch(r'\+')
+    return '+'
 
 
 def zero_or_one_quantifier():
-    return RegExMatch(r'\?')
+    return '?'
 
 
 def range_quantifier():
-    return RegExMatch(r'\{'), range_quantifier_lower_bound, \
-           Optional(RegExMatch(r','), Optional(range_quantifier_upper_bound)), RegExMatch(r'\}')
+    return '{', range_quantifier_lower_bound, Optional(',', Optional(range_quantifier_upper_bound)), '}'
 
 
 def range_quantifier_lower_bound():
@@ -180,7 +178,7 @@ def anchor_end_of_string():
 # Backreferences
 
 def backreference():
-    return RegExMatch(r'\\'), integer
+    return '\\', integer
 
 
 # Misc
@@ -195,7 +193,7 @@ def letters():
 def char():
     # return [RegExMatch(r'\#x9'), RegExMatch(r'\#xA'), RegExMatch(r'\#xD'), RegExMatch(r'[\#x20-\#xD7FF]'),
     #         RegExMatch(r'[\#xE000-\#xFFFD]'), RegExMatch(r'[\#x10000-\#x10FFFF]')]
-    return [RegExMatch(r'\u0009'), RegExMatch(r'\u000A'), RegExMatch(r'\u000D'),
+    return [RegExMatch(r'\u0009'), RegExMatch('\u000A'), RegExMatch('\u000D'),
             RegExMatch(r'[\u0020-\uD7FF]'), RegExMatch(r'[\uE000-\uFFFD]'),
             # RegExMatch(r'[\u10000-\u10FFFF]')
             ]
