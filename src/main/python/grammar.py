@@ -62,13 +62,14 @@ def character_group_negative_modifier():
 
 
 def character_group_item():
-    return [character_class, character_class_from_unicode_category, character_range,
-            char_excluding_closed_square_bracket]
+    return [
+        character_class, character_class_from_unicode_category, character_range, char_excluding_closed_square_bracket]
 
 
 def character_class():
-    return [character_class_any_word, character_class_any_word_inverted, character_class_any_decimal_digit,
-            character_class_any_decimal_digit_inverted]
+    return [
+        character_class_any_word, character_class_any_word_inverted, character_class_any_decimal_digit,
+        character_class_any_decimal_digit_inverted]
 
 
 def character_class_any_word():
