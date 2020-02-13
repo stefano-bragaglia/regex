@@ -20,7 +20,12 @@ if __name__ == '__main__':
             "(XYZ)|(123)",
     ):
         print(test_expr)
-        parse_tree = parser.parse(test_expr)
-        safe = re.sub(r'\W', '_', test_expr)
-        os.system(f'dot -Tpng -o{safe}.png regex_parse_tree.dot')
+        try:
+            parse_tree = parser.parse(test_expr)
+        except Exception as e:
+            print(e)
+        else:
+            safe = re.sub(r'\W', '_', test_expr)
+            os.system(f'dot -Tpng -o{safe}.png regex_parse_tree.dot')
+        print('\n' * 5)
     print('Done.')

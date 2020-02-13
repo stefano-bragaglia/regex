@@ -1,9 +1,5 @@
-import os
-import re
-
 from arpeggio import OneOrMore
 from arpeggio import Optional
-from arpeggio import ParserPython
 
 from arpeggio import RegExMatch
 from arpeggio import ZeroOrMore
@@ -210,5 +206,3 @@ def char_excluding_closed_square_bracket():
             RegExMatch(r'[\u0020-\u005C]'), RegExMatch(r'[\u005E-\uD7FF]'), RegExMatch(r'[\uE000-\uFFFD]'),
             # RegExMatch(r'[\u10000-\u10FFFF]')
             ]
-
-
