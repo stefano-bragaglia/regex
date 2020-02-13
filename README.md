@@ -19,6 +19,10 @@ Parsing RegEx's in Python
     
     dotregex.py
     
+    ls -al
+    
+Then, see the `.png`s just generated.
+    
 Reference:
 * https://kean.github.io/post/lets-build-regex
 * https://stackoverflow.com/questions/7657130/how-to-get-the-ast-of-a-regular-expression-string/21419351
