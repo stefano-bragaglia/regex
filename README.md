@@ -26,3 +26,13 @@ Then, see the `.png`s just generated.
 Reference:
 * https://kean.github.io/post/lets-build-regex
 * https://stackoverflow.com/questions/7657130/how-to-get-the-ast-of-a-regular-expression-string/21419351
+
+Other potentially interesting projects:
+* https://github.com/nicholaslocascio/deep-regex
+* https://github.com/sdht0/automata-from-regex
+* https://github.com/swisskyrepo/Vulny-Code-Static-Analysis
+
+* https://github.com/DarkmatterVale/regex4dummies
+* https://github.com/krzysiekfonal/grammaregex
+* https://github.com/ramtinms/tokenquery
+* https://github.com/madisonmay/CommonRegex
