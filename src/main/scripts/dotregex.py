@@ -10,14 +10,14 @@ if __name__ == '__main__':
     parser = ParserPython(regex, ws='\t ', debug=True)
     os.system(f'dot -Tpng -oregex_model.png regex_parser_model.dot')
     for test_expr in (
-            "abc?",
-            "ab+c",
-            "(ab)+c",
-            "[^-a\\-f-z\"\\]aaaa-]?",
-            "abc|d",
+            # "abc?",
+            # "ab+c",
+            # "(ab)+c",
+            # "[^-a\\-f-z\"\\]aaaa-]?",
+            # "abc|d",
             "a?",
-            ".*?(a|b){,9}?",
-            "(XYZ)|(123)",
+            # ".*?(a|b){,9}?",
+            # "(XYZ)|(123)",
     ):
         print(test_expr)
         try:
