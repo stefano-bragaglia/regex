@@ -1,3 +1,4 @@
+from collections import Counter
 from typing import Any
 
 from arpeggio import OneOrMore
@@ -209,6 +210,9 @@ def char_excluding_closed_square_bracket():
             ]
 
 
+counter = Counter()
+
+
 # noinspection PyMethodMayBeStatic
 class RegExVisitor(PTNodeVisitor):
 
@@ -234,6 +238,9 @@ class RegExVisitor(PTNodeVisitor):
 
     # Match
     def visit_match(self, node, children) -> Any:
+        if len(children) < 2:
+            return node
+
         return node
 
     def visit_match_item(self, node, children) -> Any:
@@ -299,7 +306,7 @@ class RegExVisitor(PTNodeVisitor):
         return node
 
     def visit_zero_or_one_quantifier(self, node, children) -> Any:
-        return node
+        return '?'
 
     def visit_range_quantifier(self, node, children) -> Any:
         return node
@@ -350,7 +357,6 @@ class RegExVisitor(PTNodeVisitor):
         return node
 
     def visit_char(self, node, children) -> Any:
-
         return node
 
     def visit_char_excluding_closed_square_bracket(self, node, children) -> Any:

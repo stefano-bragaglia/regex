@@ -17,9 +17,10 @@ if __name__ == '__main__':
             # "(ab)+c",
             # "[^-a\\-f-z\"\\]aaaa-]?",
             # "abc|d",
-            "ab?",
+            # "a?",
             # ".*?(a|b){,9}?",
             # "(XYZ)|(123)",
+            "a",
     ):
         print(test_expr)
         print('-' * len(test_expr))
