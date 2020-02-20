@@ -212,144 +212,144 @@ def char_excluding_closed_square_bracket():
 class RegExVisitor(PTNodeVisitor):
 
     def visit_regex(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_expression(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     # Anything that can be on one side of the alternation.
     def visit_subexpression(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_subexpression_item(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     # Grouping Constructs
     def visit_group(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_group_non_capturing_modifier(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     # Match
     def visit_match(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_match_item(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_match_any_character(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_match_character_class(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_match_character(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     # Character Classes
     def visit_character_group(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_character_group_negative_modifier(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_character_group_item(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_character_class(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_character_class_any_word(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_character_class_any_word_inverted(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_character_class_any_decimal_digit(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_character_class_any_decimal_digit_inverted(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_character_class_from_unicode_category(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_unicode_category_name(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_character_range(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     # Quantifiers
     def visit_quantifier(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_quantifier_type(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_lazy_modifier(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_zero_or_more_quantifier(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_one_or_more_quantifier(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_zero_or_one_quantifier(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_range_quantifier(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_range_quantifier_lower_bound(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_range_quantifier_upper_bound(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     # Anchors
     def visit_start_of_string_anchor(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_anchor(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_anchor_word_boundary(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_anchor_non_word_boundary(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_anchor_start_of_string_only(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_anchor_end_of_string_only_not_newline(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_anchor_end_of_string_only(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_anchor_previous_match_end(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_anchor_end_of_string(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     # Backreferences
     def visit_backreference(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     # Misc
     def visit_integer(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_letters(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_char(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
 
     def visit_char_excluding_closed_square_bracket(self, node, children) -> Any:
-        raise NotImplementedError
+        return node
