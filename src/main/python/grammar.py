@@ -209,6 +209,7 @@ def char_excluding_closed_square_bracket():
             ]
 
 
+# noinspection PyMethodMayBeStatic
 class RegExVisitor(PTNodeVisitor):
 
     def visit_regex(self, node, children) -> Any:
@@ -349,6 +350,7 @@ class RegExVisitor(PTNodeVisitor):
         return node
 
     def visit_char(self, node, children) -> Any:
+
         return node
 
     def visit_char_excluding_closed_square_bracket(self, node, children) -> Any:
