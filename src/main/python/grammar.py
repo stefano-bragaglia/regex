@@ -225,11 +225,18 @@ class RegExVisitor(PTNodeVisitor):
         return node
 
     def visit_expression(self, node, children) -> Any:
-        if len(children) == 1:
-            return children[0]
+        graph = create_node(
+            'alternative',
+            fontname=ITALIC,
+            shape=DIAMOND,
+            style=ROUNDED,
+        )
+        ident = graph['top']
+        for child in children:
+            graph = create_edge(ident, child['top'], graph=merge(graph, child))
+        graph['top'] = ident
 
-        # TODO else start/end anchors as well?
-        return node
+        return graph
 
     # Anything that can be on one side of the alternation.
     def visit_subexpression(self, node, children) -> Any:
@@ -433,6 +440,7 @@ class RegExVisitor(PTNodeVisitor):
 
 ITALIC = 'times italic'
 BOX = 'box'
+DIAMOND = 'diamond'
 ELLIPSE = 'ellipse'
 DASHED = 'dashed'
 DOT = 'dot'

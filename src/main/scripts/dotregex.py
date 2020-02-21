@@ -12,12 +12,12 @@ from grammar import RegExVisitor
 if __name__ == '__main__':
     parser = ParserPython(regex, ws='\t ', debug=False)
     for test_expr in (
-            # "abc?",
+            "abc?",
             "ab+c",
             # "(ab)+c",
             # "[^-a\\-f-z\"\\]aaaa-]?",
             # "abc|d",
-            # "a?",
+            "a?",
             # ".*?(a|b){,9}?",
             # "(XYZ)|(123)",
     ):
