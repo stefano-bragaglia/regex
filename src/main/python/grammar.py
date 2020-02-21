@@ -16,7 +16,7 @@ def regex():
 
 
 def expression():
-    return subexpression, ZeroOrMore('|', expression)
+    return subexpression, ZeroOrMore('|', subexpression)
 
 
 # Anything that can be on one side of the alternation.
@@ -258,7 +258,17 @@ class RegExVisitor(PTNodeVisitor):
 
     # Grouping Constructs
     def visit_group(self, node, children) -> Any:
-        return node
+        graph = create_node(
+            'group',
+            fontname=ITALIC,
+            shape=POLYGON,
+            graph=empty(),
+        ) if len(children) == 1 else children[1]
+        ident = graph['top']
+        graph = create_edge(ident, children[0]['top'], graph=merge(graph, children[0]))
+        graph['top'] = ident
+
+        return graph
 
     def visit_group_non_capturing_modifier(self, node, children) -> Any:
         return node
@@ -281,7 +291,13 @@ class RegExVisitor(PTNodeVisitor):
         return children[0]
 
     def visit_match_any_character(self, node, children) -> Any:
-        return node
+        return create_node(
+            dumps('any'),
+            fontname=ITALIC,
+            shape=BOX,
+            style=FILLED,
+            graph=empty(),
+        )
 
     def visit_match_character_class(self, node, children) -> Any:
         return node
@@ -444,6 +460,8 @@ DIAMOND = 'diamond'
 ELLIPSE = 'ellipse'
 DASHED = 'dashed'
 DOT = 'dot'
+FILLED = 'filled'
+POLYGON = 'polygon'
 ROUNDED = 'rounded'
 RED = 'red'
 

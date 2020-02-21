@@ -18,7 +18,7 @@ if __name__ == '__main__':
             # "[^-a\\-f-z\"\\]aaaa-]?",
             "abc|d",
             "a?",
-            # ".*?(a|b){,9}?",
+            ".*?(a|b){,9}?",
             # "(XYZ)|(123)",
     ):
         print(test_expr)
@@ -27,11 +27,13 @@ if __name__ == '__main__':
             parse_tree = parser.parse(test_expr)
         except Exception as e:
             print(e)
+            raise e
         else:
             try:
                 result = visit_parse_tree(parse_tree, RegExVisitor(debug=False))
             except Exception as e:
                 print(e)
+                raise e
             else:
                 content = convert(result)
                 print(content)
