@@ -25,7 +25,7 @@ def set_properties(project):
     project.set_property("coverage_verbose_output", True)  # default is False
     project.set_property("coverage_allow_non_imported_modules", False)  # default is True
     project.set_property("coverage_exceptions", [
-        "__init__", "grammar",
+        "__init__", "grammar", "stack", "overflow",
     ])
     project.set_property("coverage_threshold_warn", 35)  # default is 70
     project.set_property("coverage_branch_threshold_warn", 35)  # default is 0
