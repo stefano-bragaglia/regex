@@ -18,45 +18,50 @@ def sequence():
 
 
 def atom():
-    return [anchor, backref, match, group]
+    return [group, match, backref, anchor]
 
 
-def anchor():
-    return ['\\b', '\\B', '\\A', '\\z', '\\Z', '\\G', '$', '^']
-
-
-def backref():
-    return '\\', integer
+def group():
+    return '(', Optional('?:'), alternative, ')', Optional(quantifier)
 
 
 def match():
-    return ['.', character_class, character_category, character_set, symbol, character, unicode], Optional(quantifier)
+    return [character_set, character_category, character_any, character_class, unicode, character, symbol], \
+           Optional(quantifier)
 
 
-def character_class():
-    return ['\\w', '\\W', '\\d', '\\D']
+def character_set():
+    return '[', Optional('^'), OneOrMore(character_element), ']'
 
 
 def character_category():
     return RegExMatch(r'\\p\{[a-zA-Z]+\}')
 
 
-def character_set():
-    return '[', Optional('^'), OneOrMore(character_elem), ']'
+def character_any():
+    return '.'
 
 
-def character_elem():
-    return [character_class, character_category, character_range]  # | Char /* excluding ] */
+def character_class():
+    return ['\\w', '\\W', '\\d', '\\D']
+
+
+def character_element():
+    return [character_range, character_category, character_class]
 
 
 def character_range():
-    return [(symbol, Optional('-', symbol)),
+    return [(unicode, Optional('-', unicode)),
             (character, Optional('-', character)),
-            (unicode, Optional('-', unicode))]
+            (symbol, Optional('-', symbol))]
 
 
-def group():
-    return '(', Optional('?:'), alternative, ')', Optional(quantifier)
+def backref():
+    return '\\', integer
+
+
+def anchor():
+    return ['\\b', '\\B', '\\A', '\\z', '\\Z', '\\G', '$', '^']
 
 
 def quantifier():

@@ -44,20 +44,21 @@ def empty() -> Graph:
     }
 
 
-def as_node(
-        label: Any,
+def add_node(
+        label: str,
         graph: Dict = None,
         font: Font = None,
         shape: Shape = None,
         style: Style = None,
         color: Color = None,
+        **params: Any,
 ) -> Graph:
     if graph is None:
         graph = empty()
 
     ident = next(counter)
     nodes = graph.setdefault('nodes', {})
-    node = nodes.setdefault(ident, {'label': json.dumps(label)})
+    node = nodes.setdefault(ident, {'label': label})
     if font:
         node['fontname'] = font.value
     if shape:
@@ -66,6 +67,10 @@ def as_node(
         node['style'] = style.value
     if color:
         node['color'] = color.value
+    for key, value in params.items():
+        if value is not None:
+            node[key] = json.dumps(value)
+    graph['top'] = ident
 
     return graph
 
@@ -79,7 +84,7 @@ def add_edge(
         color: Color = None,
 ) -> Graph:
     edges = graph.setdefault('edges', {})
-    edge = edges.setdefault('source', {}).setdefault('target', {})
+    edge = edges.setdefault(source, {}).setdefault(target, {})
     if label:
         edge['label'] = json.dumps(label)
     if color:
@@ -131,12 +136,12 @@ def merge(
 
 def convert(graph: Graph) -> str:
     lines = []
-    for source, node in sorted(graph.get('nodes', {}).items(), reverse=True):
+    for source, node in graph.get('nodes', {}).items():
         params = ' '.join(f'{k}={json.dumps(v)}' for k, v in node.items())
         lines.append(f"\t{source} [{params}];")
 
         neighbours = graph.get('edges', {}).get(source, {})
-        for target, edge in sorted(neighbours.items(), reverse=True):
+        for target, edge in neighbours.items():
             if not edge:
                 lines.append(f"\t{source} -> {target};")
             else:
