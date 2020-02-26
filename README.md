@@ -22,7 +22,13 @@ Parsing RegEx's in Python
     ls -al
     
 Then, see the `.png`s just generated.
-    
+
+Notes:
+* Dashed mean (potentially) *optional*
+* Green means (potentially) *repeated*
+* Blue means *greedy*
+* Red means *negated*
+
 Reference:
 * https://docs.python.org/3.8/library/re.html
 * https://kean.github.io/post/lets-build-regex
