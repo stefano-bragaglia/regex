@@ -19,7 +19,7 @@ class Shape(Enum):
     BOX = 'box'
     DIAMOND = 'diamond'
     ELLIPSE = 'ellipse'
-    POLYGON = 'polygon'
+    TRAPEZIUM = 'trapezium'
 
 
 class Style(Enum):
@@ -33,7 +33,14 @@ class Line(Enum):
 
 
 class Color(Enum):
+    BLUE = 'blue'
+    GREEN = 'green'
     RED = 'red'
+
+
+GREEDY = Color.BLUE
+NEGATED = Color.RED
+REPEATED = Color.GREEN
 
 
 def empty() -> Graph:
@@ -79,20 +86,20 @@ def add_edge(
         source: int,
         target: int,
         graph: Graph,
-        label: Any = None,
+        label: str = None,
         line: Line = None,
         color: Color = None,
 ) -> Graph:
     edges = graph.setdefault('edges', {})
     edge = edges.setdefault(source, {}).setdefault(target, {})
     if label:
-        edge['label'] = json.dumps(label)
+        edge['label'] = label
     if color:
-        edge['fontcolor'] = color
+        edge['fontcolor'] = color.value
     if line:
-        edge['shape'] = line
+        edge['shape'] = line.value
     if color:
-        edge['color'] = color
+        edge['color'] = color.value
     if graph['top'] == target:
         graph['top'] = source
 
@@ -134,7 +141,7 @@ def merge(
     }
 
 
-def convert(graph: Graph) -> str:
+def convert(graph: Graph, title: str = None) -> str:
     lines = []
     for source, node in graph.get('nodes', {}).items():
         params = ' '.join(f'{k}={json.dumps(v)}' for k, v in node.items())
@@ -149,6 +156,9 @@ def convert(graph: Graph) -> str:
                 lines.append(f"\t{source} -> {target} [{params}];")
 
         lines.append('')
+    if 'title':
+        lines.append(f"\tlabel=\"{title}\";")
+        lines.append(f"\tlabelloc=\"t\";")
     lines = '\n'.join(lines)
 
-    return f"digraph regex_graph {{\n{lines}\n\tfontname=\"times\"\n}}\n"
+    return f"digraph regex_graph {{\n{lines}\n\tfontname=\"times\";\n}}\n"

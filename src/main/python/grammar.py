@@ -14,54 +14,56 @@ def alternative():
 
 
 def sequence():
-    return OneOrMore(atom)
-
-
-def atom():
-    return [group, match, backref, anchor]
-
-
-def group():
-    return '(', Optional('?:'), alternative, ')', Optional(quantifier)
+    return OneOrMore(match)
 
 
 def match():
-    return [character_set, character_category, character_any, character_class, unicode, character, symbol], \
+    return [anchor, backref, atom, group]
+
+
+def anchor():
+    return RegExMatch(r'\$|\^|\\[ABbGZz]')
+
+
+def backref():
+    return RegExMatch(r'\\\d+')
+
+
+def atom():
+    return [character_any, character_set, character_category, character_class, unicode, ascii_code, symbol, escaped], \
            Optional(quantifier)
+
+
+def character_any():
+    return RegExMatch(r'\.')
 
 
 def character_set():
     return '[', Optional('^'), OneOrMore(character_element), ']'
 
 
+def character_element():
+    return [character_category, character_class, character_range]
+
+
 def character_category():
-    return RegExMatch(r'\\p\{[a-zA-Z]+\}')
-
-
-def character_any():
-    return '.'
+    return RegExMatch(r'\\p\{[A-Za-z]+\}')
 
 
 def character_class():
-    return ['\\w', '\\W', '\\d', '\\D']
-
-
-def character_element():
-    return [character_range, character_category, character_class]
+    return RegExMatch(r'\\[DdSsWw]')
 
 
 def character_range():
-    return [(unicode, Optional('-', unicode)),
-            (character, Optional('-', character)),
-            (symbol, Optional('-', symbol))]
+    return character, Optional('-', character)
 
 
-def backref():
-    return '\\', integer
+def character():
+    return [unicode, ascii_code, symbol_in_range, escaped]
 
 
-def anchor():
-    return ['\\b', '\\B', '\\A', '\\z', '\\Z', '\\G', '$', '^']
+def group():
+    return '(', Optional('?:'), alternative, ')', Optional(quantifier)
 
 
 def quantifier():
@@ -81,24 +83,24 @@ def one_or_more():
 
 
 def n_times():
-    return '{', [(',', integer), (integer, Optional(',', Optional(integer)))], '}'
-
-
-def integer():
-    return RegExMatch(r'\d+')
-
-
-def letters():
-    return RegExMatch(r'[a-zA-Z]+')
+    return '{', RegExMatch(r'\d+'), Optional(',', RegExMatch(r'\d+')), '}'
 
 
 def symbol():
-    return ['\t', '\r', '\n', RegExMatch(r'[\u0020-\uD7FF]'), RegExMatch(r'[\uE000-\uFFFF]')]  # [\x10000-\x10FFFF]
+    return RegExMatch(r'[^$()*+,.?\[\]^{|}]')
 
 
-def character():
-    return RegExMatch(r'\\x[0-9a-fA-F]{2}')
+def symbol_in_range():
+    return RegExMatch(r'[^\[\]\-]')
+
+
+def escaped():
+    return RegExMatch(r'\\[^ABbDdGSsuWwxZz]')
+
+
+def ascii_code():
+    return RegExMatch(r'\\x[0-9a-fA-F]{2}?')
 
 
 def unicode():
-    return RegExMatch(r'\\u[0-9a-fA-F]{4}')
+    return RegExMatch(r'\\u[0-9a-fA-F]{4}?')

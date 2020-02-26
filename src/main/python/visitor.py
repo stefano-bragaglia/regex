@@ -5,9 +5,13 @@ from arpeggio import PTNodeVisitor
 
 from utils import add_edge
 from utils import add_node
+from utils import Color
 from utils import Font
+from utils import GREEDY
+from utils import Line
 from utils import merge
-from utils import set_top
+from utils import NEGATED
+from utils import REPEATED
 from utils import Shape
 from utils import Style
 
@@ -34,114 +38,150 @@ class RegExVisitor(PTNodeVisitor):
             return children[0]
 
         graph = add_node('sequence', font=Font.ITALIC, shape=Shape.BOX, style=Style.ROUNDED)
+        source = graph['top']
         for child in children:
             graph = merge(graph, child)
-            graph = add_edge(graph['top'], child['top'], graph)
+            graph = add_edge(source, child['top'], graph)
 
         return graph
 
-    def visit_atom(self, node, children) -> Any:
+    def visit_match(self, node, children) -> Any:
         return children[0]
 
     def visit_anchor(self, node, children) -> Any:
-        return node
+        return add_node(node.value, shape=Shape.BOX, style=Style.FILLED)
 
     def visit_backref(self, node, children) -> Any:
-        return node
+        return add_node(node.value, shape=Shape.BOX, style=Style.FILLED)
 
-    def visit_match(self, node, children) -> Any:
-        graph = add_node(
-            'atom',
-            font=Font.ITALIC,
-            shape=Shape.ELLIPSE,
-        ) if len(children) == 1 else children[1]
-        ident = graph['top']
-        graph = add_edge(
-            ident,
-            children[0]['top'],
-            merge(graph, children[0]),
-        )
-        set_top(ident, graph)
+    def visit_atom(self, node, children) -> Any:
+        params = {
+            'label': f"atom{children[1]['label'] if len(children) > 1 else ''}",
+            'font': Font.ITALIC,
+            'shape': Shape.ELLIPSE,
+        }
+        if len(children) > 1:
+            for key, value in children[1].items():
+                if key not in ('label', 'line') and value is not None:
+                    params[key] = value
+        graph = add_node(**params)
+        if len(children) > 1 and 'line' in children[1]:
+            params = {k: v for k, v in children[1].items() if k != 'style' and v is not None}
+            graph = add_edge(graph['top'], graph['top'], graph, **params)
+
+        source, target = graph['top'], children[0]['top']
+        graph = merge(graph, children[0])
+        graph = add_edge(source, target, graph, )
 
         return graph
 
-    def visit_character_class(self, node, children) -> Any:
-        return node
-
-    def visit_character_category(self, node, children) -> Any:
-        return node
+    def visit_character_any(self, node, children) -> Any:
+        return add_node(node.value, shape=Shape.BOX, style=Style.FILLED)
 
     def visit_character_set(self, node, children) -> Any:
-        return node
+        negated = children[0] == '^'
+        if negated:
+            children = children[1:]
 
-    def visit_character_elem(self, node, children) -> Any:
-        return node
-
-    def visit_character_range(self, node, children) -> Any:
-        return node
-
-    def visit_group(self, node, children) -> Any:
-        return node
-
-    def visit_quantifier(self, node, children) -> Any:
-        graph = children[0]
-        if len(children) > 1 and children[1] == '?':
-            graph['filled'] = Style.FILLED.value
+        graph = add_node(
+            f"{'^' if negated else ''}charset",
+            font=Font.ITALIC,
+            shape=Shape.TRAPEZIUM,
+            color=NEGATED if negated else None,
+        )
+        source = graph['top']
+        for child in children:
+            graph = merge(graph, child)
+            graph = add_edge(source, child['top'], graph)
 
         return graph
 
-    def visit_zero_or_one(self, node, children) -> Any:
+    def visit_character_element(self, node, children) -> Any:
+        return children[0]
+
+    def visit_character_category(self, node, children) -> Any:
+        return add_node(node.value, shape=Shape.BOX, style=Style.FILLED)
+
+    def visit_character_class(self, node, children) -> Any:
+        return add_node(node.value, shape=Shape.BOX, style=Style.FILLED)
+
+    def visit_character_range(self, node, children) -> Any:
         return add_node(
-            'atom?',
-            font=Font.ITALIC,
-            shape=Shape.ELLIPSE,
-            style=Style.DASHED,
-            min=0,
-            max=1,
+            '-'.join(c['nodes'][c['top']]['label'] for c in children),
+            shape=Shape.BOX,
+            style=Style.FILLED if all(c.get('style', None) == Style.FILLED for c in children) else None,
         )
-
-    def visit_zero_or_more(self, node, children) -> Any:
-        return add_node(
-            'atom*',
-            font=Font.ITALIC,
-            shape=Shape.ELLIPSE,
-            style=Style.DASHED,
-            min=0,
-        )
-
-    def visit_one_or_more(self, node, children) -> Any:
-        return add_node(
-            'atom+',
-            font=Font.ITALIC,
-            shape=Shape.ELLIPSE,
-            style=Style.DASHED,
-            min=1,
-        )
-
-    def visit_n_times(self, node, children) -> Any:
-        min = None if children[1] == ',' else children[1]
-        max = None if children[-1] == ',' else children[-1]
-
-        return add_node(
-            f"atom{''.join(children)}",
-            font=Font.ITALIC,
-            shape=Shape.ELLIPSE,
-            style=Style.DASHED,
-            min=min,
-            max=max,
-        )
-
-    # def visit_integer(self, node, children) -> Any:
-    #     return node
-
-    # def visit_letters(self, node, children) -> Any:
-    #     return node
-
-    def visit_symbol(self, node, children) -> Any:
-        return add_node(json.dumps(children[0]), shape=Shape.BOX)
 
     def visit_character(self, node, children) -> Any:
-        return node
+        return children[0]
+
+    def visit_group(self, node, children) -> Any:
+        params = {
+            'label': f"group{children[1]['label'] if len(children) > 1 else ''}",
+            'font': Font.ITALIC,
+            'shape': Shape.ELLIPSE,
+        }
+        if len(children) > 1:
+            for key, value in children[1].items():
+                if key not in ('label', 'line') and value is not None:
+                    params[key] = value
+        graph = add_node(**params)
+        if len(children) > 1 and 'line' in children[1]:
+            params = {k: v for k, v in children[1].items() if k != 'style' and v is not None}
+            graph = add_edge(graph['top'], graph['top'], graph, **params)
+
+        source, target = graph['top'], children[0]['top']
+        graph = merge(graph, children[0])
+        graph = add_edge(source, target, graph, )
+
+        return graph
+
+    def visit_quantifier(self, node, children) -> Any:
+        if len(children) > 1 and children[-1] == '?':
+            children[0]['color'] = GREEDY
+
+        return children[0]
+
+    def visit_zero_or_one(self, node, children) -> Any:
+        return {
+            'label': '?',
+            'style': Style.DASHED,
+        }
+
+    def visit_zero_or_more(self, node, children) -> Any:
+        return {
+            'label': '*',
+            'style': Style.DASHED,
+            'line': Line.DOT,
+            'color': REPEATED,
+        }
+
+    def visit_one_or_more(self, node, children) -> Any:
+        return {
+            'label': '+',
+            'line': Line.DOT,
+            'color': REPEATED,
+        }
+
+    def visit_n_times(self, node, children) -> Any:
+        return {
+            'label': f"{{{','.join(children)}}}",
+            'style': Style.DASHED if int(children[0]) == 0 else None,
+            'line': Line.DOT if len(children) > 1 and int(children[1]) > 1 or int(children[0]) > 1 else None,
+            'color': REPEATED if len(children) > 1 and int(children[1]) > 1 or int(children[0]) > 1 else None,
+        }
+
+    def visit_symbol(self, node, children) -> Any:
+        return add_node(json.dumps(node.value), shape=Shape.BOX)
+
+    def visit_symbol_in_range(self, node, children) -> Any:
+        return add_node(node.value, shape=Shape.BOX)
+
+    def visit_escaped(self, node, children) -> Any:
+        return add_node(node.value, shape=Shape.BOX)
+
+    def visit_ascii_code(self, node, children) -> Any:
+        return add_node(node.value, shape=Shape.BOX)
 
     def visit_unicode(self, node, children) -> Any:
-        return node
+        return add_node(node.value, shape=Shape.BOX)

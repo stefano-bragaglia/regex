@@ -24,6 +24,7 @@ Parsing RegEx's in Python
 Then, see the `.png`s just generated.
     
 Reference:
+* https://docs.python.org/3.8/library/re.html
 * https://kean.github.io/post/lets-build-regex
 * https://stackoverflow.com/questions/7657130/how-to-get-the-ast-of-a-regular-expression-string/21419351
 

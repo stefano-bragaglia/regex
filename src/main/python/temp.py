@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import os
 import re
 
@@ -10,25 +9,26 @@ from utils import convert
 from visitor import RegExVisitor
 
 if __name__ == '__main__':
-    parser = ParserPython(regex, ws='\t ', debug=False)
+    parser = ParserPython(regex, ws='\t ', debug=False)  # , reduce_tree=True
     for test_expr in (
-            # "a?",
-            "\x61?",
-            # "\u0061?",
+            "[^a-b]+",
+            "^(abc)?\\1$",
+            # ".?a*\\w+\\x64{2}\\u0064{0,3}",
+            # ".??a*?\\w+?\\x64{2}?\\u0064{0,3}?",
             # "abc?",
             # "ab+c",
-            # "(ab)+c",
             # "abc|d",
-            # ".*?(a|b){,9}?",
+            # "(ab)+c",
+            # ".*?(a|b){0,9}?",
             # "(XYZ)|(123)",
-            # "[^-a\\-f-z\"\\]aaaa-]?",
+            # "[^\\-a\\-f-z\"\\]aaaa\\-]?",
     ):
         print(test_expr)
         print('-' * len(test_expr))
         print()
         parse_tree = parser.parse(test_expr)
         result = visit_parse_tree(parse_tree, RegExVisitor(debug=False))
-        content = convert(result)
+        content = convert(result, title=test_expr)
         safe = re.sub(r'\W', '_', test_expr)
         with open(f'{safe}.dot', 'w') as file:
             file.write(content)
