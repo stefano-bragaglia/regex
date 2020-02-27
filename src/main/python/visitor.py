@@ -176,6 +176,7 @@ class RegExVisitor(PTNodeVisitor):
 
     def visit_quantifier(self, node, children) -> Any:
         if len(children) > 1 and children[-1] == '?':
+            children[0]['label'] += '?'
             children[0]['color'] = GREEDY
 
         return children[0]
