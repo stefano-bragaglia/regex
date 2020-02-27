@@ -22,7 +22,7 @@ if __name__ == '__main__':
             "abc|d",
             ".*?(a|b){0,9}?",
             "(XYZ)|(123)",
-            # # "[^-a\\-f-z\"\\]aaaa-]?",
+            # "[^-a\\-f-z\"\\]aaaa-]?",
     ):
         print(test_expr)
         print('-' * len(test_expr))

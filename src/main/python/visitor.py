@@ -134,8 +134,13 @@ class RegExVisitor(PTNodeVisitor):
             values.add(ord(children[0]))
             children = children[1:]
         for child in children:
-            if isinstance(child, str):
-                classes.add(child)
+            if isinstance(child, dict):
+                ident = child['top']
+                label = child['nodes'][ident]['label']
+                try:
+                    values.update(order(label))
+                except TypeError:
+                    classes.add(label)
             else:
                 values.update(child)
 
@@ -191,10 +196,10 @@ class RegExVisitor(PTNodeVisitor):
         return children[0]
 
     def visit_character_category(self, node, children) -> Any:
-        return node.value
+        return add_node(node.value, shape=Shape.BOX, style=Style.FILLED)
 
     def visit_character_class(self, node, children) -> Any:
-        return order(node.value)
+        return add_node(node.value, shape=Shape.BOX, style=Style.FILLED)
 
     def visit_character_range(self, node, children) -> Any:
         values = sorted({v for c in children for v in c})
@@ -267,10 +272,10 @@ class RegExVisitor(PTNodeVisitor):
         }
 
     def visit_symbol(self, node, children) -> Any:
-        return add_node('" "' if node.value == ' ' else node.value, shape=Shape.BOX)
+        return add_node(normal(ord(node.value)), shape=Shape.BOX)
 
     def visit_symbol_in_range(self, node, children) -> Any:
-        return add_node('" "' if node.value == ' ' else node.value, shape=Shape.BOX)
+        return add_node(normal(ord(node.value)), shape=Shape.BOX)
 
     def visit_escaped(self, node, children) -> Any:
         return add_node(node.value, shape=Shape.BOX)
@@ -279,7 +284,7 @@ class RegExVisitor(PTNodeVisitor):
         return add_node(node.value, shape=Shape.BOX)
 
     def visit_ascii_code(self, node, children) -> Any:
-        return add_node(node.value, shape=Shape.BOX)
+        return add_node(normal(int(node.value[2:], 16)), shape=Shape.BOX)
 
     def visit_unicode(self, node, children) -> Any:
-        return add_node(node.value, shape=Shape.BOX)
+        return add_node(normal(int(node.value[2:], 16)), shape=Shape.BOX)

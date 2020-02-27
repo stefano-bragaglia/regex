@@ -9,9 +9,9 @@ from typing import Set
 
 Range = Set[int]
 
-unicode = re.compile(r'\\u([0-9A-Fa-f]{4})')
-ascii_code = re.compile(r'\\x([0-9A-Fa-f]{2})')
-escape = re.compile(r'\\(.)')
+unicode = re.compile(r'^\\u([0-9A-Fa-f]{4})$')
+ascii_code = re.compile(r'^\\x([0-9A-Fa-f]{2})$')
+escape = re.compile(r'^\\(.)$')
 
 DIGIT = {i for i in range(ord('0'), ord('9') + 1)}
 BUT_DIGIT = {i for i in range(0, 65536)} - DIGIT
