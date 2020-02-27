@@ -29,6 +29,7 @@ Notes:
 * Blue means *greedy*
 * Red means *negated*
 * Sequence of atoms with arity 1 are collapsed
+* Charsets are simplified
 
 Reference:
 * https://docs.python.org/3.8/library/re.html

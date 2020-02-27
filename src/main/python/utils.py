@@ -1,9 +1,110 @@
 import itertools
 import json
+import re
 from copy import deepcopy
 from enum import Enum
 from typing import Any
 from typing import Dict
+from typing import Set
+
+Range = Set[int]
+
+unicode = re.compile(r'\\u([0-9A-Fa-f]{4})')
+ascii_code = re.compile(r'\\x([0-9A-Fa-f]{2})')
+escape = re.compile(r'\\(.)')
+
+DIGIT = {i for i in range(ord('0'), ord('9') + 1)}
+BUT_DIGIT = {i for i in range(0, 65536)} - DIGIT
+
+SPACE = {ord('\t'), ord('\n'), ord('\v'), ord('\f'), ord('\r'), ord(' ')}
+BUT_SPACE = {i for i in range(0, 65536)} - SPACE
+
+UPPERCASE = {i for i in range(ord('A'), ord('A') + 1)}
+LOWERCASE = {i for i in range(ord('a'), ord('z') + 1)}
+UNDERSCORE = {ord('_')}
+WORD = {*UPPERCASE, *LOWERCASE, *DIGIT, *UNDERSCORE}
+BUT_WORD = {i for i in range(0, 65536)} - WORD
+
+
+def order(char: str) -> Range:
+    match = unicode.match(char)
+    if match:
+        return {int(match.group(1), 16)}
+
+    match = ascii_code.match(char)
+    if match:
+        return {int(match.group(1), 16)}
+
+    match = escape.match(char)
+    if match and match.group(1) == 'd':
+        return DIGIT
+
+    if match and match.group(1) == 'D':
+        return BUT_DIGIT
+
+    if match and match.group(1) == 's':
+        return SPACE
+
+    if match and match.group(1) == 'S':
+        return BUT_SPACE
+
+    if match and match.group(1) == 'w':
+        return WORD
+
+    if match and match.group(1) == 'W':
+        return BUT_WORD
+
+    if match and match.group(1) == 't':
+        return {ord('\t')}
+
+    if match and match.group(1) == 'n':
+        return {ord('\n')}
+
+    if match and match.group(1) == 'v':
+        return {ord('\v')}
+
+    if match and match.group(1) == 'f':
+        return {ord('\f')}
+
+    if match and match.group(1) == 'r':
+        return {ord('\r')}
+
+    if match and match.group(1) == ' ':
+        return {ord(' ')}
+
+    if match and match.group(1) == ']':
+        return {ord(']')}
+
+    if match and match.group(1) == '-':
+        return {ord('-')}
+
+    if match:
+        return {ord(match.group(1))}
+
+    return {ord(char)}
+
+
+def normal(value: int) -> str:
+    if value == 9:
+        return '\\t'
+
+    if value == 10:
+        return '\\n'
+
+    if value == 11:
+        return '\\v'
+
+    if value == 12:
+        return '\\f'
+
+    if value == 13:
+        return '\\r'
+
+    if value == 32:
+        return '" "'
+
+    return chr(value)
+
 
 Graph = Dict[str, Any]
 

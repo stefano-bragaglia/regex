@@ -4,14 +4,22 @@ from arpeggio import PTNodeVisitor
 
 from utils import add_edge
 from utils import add_node
+from utils import BUT_DIGIT
+from utils import BUT_SPACE
+from utils import BUT_WORD
+from utils import DIGIT
 from utils import Font
 from utils import GREEDY
 from utils import Line
 from utils import merge
 from utils import NEGATED
+from utils import normal
+from utils import order
 from utils import REPEATED
 from utils import Shape
+from utils import SPACE
 from utils import Style
+from utils import WORD
 
 
 # noinspection PyMethodMayBeStatic
@@ -121,6 +129,16 @@ class RegExVisitor(PTNodeVisitor):
         if negated:
             children = children[1:]
 
+        classes, values = set(), set()
+        if children[0] in ['-', ']']:
+            values.add(ord(children[0]))
+            children = children[1:]
+        for child in children:
+            if isinstance(child, str):
+                classes.add(child)
+            else:
+                values.update(child)
+
         graph = add_node(
             f"{'^' if negated else ''}charset",
             font=Font.ITALIC,
@@ -128,7 +146,42 @@ class RegExVisitor(PTNodeVisitor):
             color=NEGATED if negated else None,
         )
         source = graph['top']
-        for child in children:
+
+        for class_ in sorted(classes):
+            child = add_node(class_, shape=Shape.BOX, style=Style.FILLED)
+            graph = merge(graph, child)
+            graph = add_edge(source, child['top'], graph)
+
+        for group, symbol in [
+            (BUT_SPACE, '\\S'),
+            (BUT_DIGIT, '\\D'),
+            (BUT_WORD, '\\W'),
+            (WORD, '\\w'),
+            (DIGIT, '\\d'),
+            (SPACE, '\\s'),
+        ]:
+            if group in values:
+                child = add_node(symbol, shape=Shape.BOX, style=Style.FILLED)
+                graph = merge(graph, child)
+                graph = add_edge(source, child['top'], graph)
+                values -= group
+
+        start, last = None, None
+        for value in sorted(values):
+            if last is None:
+                start, last = value, value
+            elif value == last + 1:
+                last = value
+            else:
+                label = normal(start) if last == start else f"{normal(start)}-{normal(last)}"
+                child = add_node(label, shape=Shape.BOX)
+                graph = merge(graph, child)
+                graph = add_edge(source, child['top'], graph)
+                start, last = None, None
+
+        if last is not None:
+            label = normal(start) if last == start else f"{normal(start)}-{normal(last)}"
+            child = add_node(label, shape=Shape.BOX)
             graph = merge(graph, child)
             graph = add_edge(source, child['top'], graph)
 
@@ -138,20 +191,23 @@ class RegExVisitor(PTNodeVisitor):
         return children[0]
 
     def visit_character_category(self, node, children) -> Any:
-        return add_node(node.value, shape=Shape.BOX, style=Style.FILLED)
+        return node.value
 
     def visit_character_class(self, node, children) -> Any:
-        return add_node(node.value, shape=Shape.BOX, style=Style.FILLED)
+        return order(node.value)
 
     def visit_character_range(self, node, children) -> Any:
-        return add_node(
-            '-'.join(c['nodes'][c['top']]['label'] for c in children),
-            shape=Shape.BOX,
-            style=Style.FILLED if all(c.get('style', None) == Style.FILLED for c in children) else None,
-        )
+        values = sorted({v for c in children for v in c})
+
+        return {i for i in range(values[0], values[-1] + 1)}
 
     def visit_character(self, node, children) -> Any:
-        return children[0]
+        ident = children[0]['top']
+        char = children[0]['nodes'][ident]['label']
+        if char == '" "':
+            char = ' '
+
+        return order(char)
 
     def visit_group(self, node, children) -> Any:
         params = {
@@ -211,12 +267,15 @@ class RegExVisitor(PTNodeVisitor):
         }
 
     def visit_symbol(self, node, children) -> Any:
-        return add_node(node.value, shape=Shape.BOX)
+        return add_node('" "' if node.value == ' ' else node.value, shape=Shape.BOX)
 
     def visit_symbol_in_range(self, node, children) -> Any:
-        return add_node(node.value, shape=Shape.BOX)
+        return add_node('" "' if node.value == ' ' else node.value, shape=Shape.BOX)
 
     def visit_escaped(self, node, children) -> Any:
+        return add_node(node.value, shape=Shape.BOX)
+
+    def visit_escaped_in_range(self, node, children) -> Any:
         return add_node(node.value, shape=Shape.BOX)
 
     def visit_ascii_code(self, node, children) -> Any:

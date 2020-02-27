@@ -39,11 +39,11 @@ def character_any():
 
 
 def character_set():
-    return '[', Optional('^'), OneOrMore(character_element), ']'
+    return '[', Optional('^'), Optional([']', '-']), ZeroOrMore(character_element), ']'
 
 
 def character_element():
-    return [character_category, character_class, character_range]
+    return [character_category, character_class, character_range, character]
 
 
 def character_category():
@@ -55,11 +55,11 @@ def character_class():
 
 
 def character_range():
-    return character, Optional('-', character)
+    return character, '-', character
 
 
 def character():
-    return [unicode, ascii_code, symbol_in_range, escaped]
+    return [unicode, ascii_code, escaped_in_range, symbol_in_range]
 
 
 def group():
@@ -91,11 +91,15 @@ def symbol():
 
 
 def symbol_in_range():
-    return RegExMatch(r'[^\[\]\-]')
+    return RegExMatch(r'[^]-]')
 
 
 def escaped():
     return RegExMatch(r'\\[^ABbDdGSsuWwxZz]')
+
+
+def escaped_in_range():
+    return RegExMatch(r'\\[]tnvfr-]')
 
 
 def ascii_code():
