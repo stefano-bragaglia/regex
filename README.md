@@ -28,6 +28,7 @@ Notes:
 * Green means (potentially) *repeated*
 * Blue means *greedy*
 * Red means *negated*
+* Sequence of atoms with arity 1 are collapsed
 
 Reference:
 * https://docs.python.org/3.8/library/re.html

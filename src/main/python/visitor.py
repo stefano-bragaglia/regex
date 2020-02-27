@@ -1,11 +1,9 @@
-import json
 from typing import Any
 
 from arpeggio import PTNodeVisitor
 
 from utils import add_edge
 from utils import add_node
-from utils import Color
 from utils import Font
 from utils import GREEDY
 from utils import Line
@@ -39,9 +37,49 @@ class RegExVisitor(PTNodeVisitor):
 
         graph = add_node('sequence', font=Font.ITALIC, shape=Shape.BOX, style=Style.ROUNDED)
         source = graph['top']
+
+        label, style = None, None
         for child in children:
-            graph = merge(graph, child)
-            graph = add_edge(source, child['top'], graph)
+            target = child['top']
+            root = child['nodes'][target]
+
+            if root['label'] == 'atom':
+                ident = next((k for k in child['edges'][target]), None)
+                atom = child['nodes'][ident]
+                if label is None:
+                    label = atom['label']
+                    style = Style.FILLED if 'style' in atom else None
+                else:
+                    label = label + atom['label']
+                    style = style and (Style.FILLED if 'style' in atom else None)
+
+            else:
+                if label is not None:
+                    node = add_node(label, shape=Shape.BOX, style=style)
+                    tgt = node['top']
+                    node = merge(node, add_node('atom', font=Font.ITALIC, shape=Shape.ELLIPSE))
+                    src = node['top']
+                    node = add_edge(src, tgt, node)
+
+                    graph = merge(graph, node)
+                    graph = add_edge(source, src, graph)
+                    label, style = None, None
+
+                graph = merge(graph, child)
+                graph = add_edge(source, target, graph)
+
+        if label is not None:
+            node = add_node(label, shape=Shape.BOX, style=style)
+            tgt = node['top']
+            node = merge(node, add_node('atom', font=Font.ITALIC, shape=Shape.ELLIPSE))
+            src = node['top']
+            node = add_edge(src, tgt, node)
+
+            graph = merge(graph, node)
+            graph = add_edge(source, src, graph)
+
+            # graph = merge(graph, child)
+            # graph = add_edge(source, target, graph)
 
         return graph
 
@@ -172,7 +210,7 @@ class RegExVisitor(PTNodeVisitor):
         }
 
     def visit_symbol(self, node, children) -> Any:
-        return add_node(json.dumps(node.value), shape=Shape.BOX)
+        return add_node(node.value, shape=Shape.BOX)
 
     def visit_symbol_in_range(self, node, children) -> Any:
         return add_node(node.value, shape=Shape.BOX)

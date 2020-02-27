@@ -22,14 +22,14 @@ if __name__ == '__main__':
             "abc|d",
             ".*?(a|b){0,9}?",
             "(XYZ)|(123)",
-            # "[^-a\\-f-z\"\\]aaaa-]?",
+            # # "[^-a\\-f-z\"\\]aaaa-]?",
     ):
         print(test_expr)
         print('-' * len(test_expr))
         print()
         parse_tree = parser.parse(test_expr)
         result = visit_parse_tree(parse_tree, RegExVisitor(debug=False))
-        content = convert(result, title=test_expr)
+        content = convert(result, title=re.escape(test_expr))
         safe = re.sub(r'\W', '_', test_expr)
         with open(f'{safe}.dot', 'w') as file:
             file.write(content)
